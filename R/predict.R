@@ -32,15 +32,15 @@ glm_predict <- function(model_data, y, x, threshold=0.5, predict_data=NA, ...) {
   model <- glm(as.formula(f), family="binomial", data=model_data, ...)
 
   if (is.na(predict_data)) {
-    a <- augment(model, type.predict="response")
+    a <- broom::augment(model, type.predict="response")
   }
   else {
-    a <- augment(model, type.predict="response", newdata=predict_data)
+    a <- broom::augment(model, type.predict="response", newdata=predict_data)
   }
 
   # Predict based on the given threshold
   a <- a %>%
-    mutate(.prediction=ifelse(.fitted > threshold, 1, 0))
+    dplyr::mutate(.prediction=ifelse(.fitted > threshold, 1, 0))
 
   # Calculate error types and metrics
   true_pos <- sum(a[[".prediction"]]==1 & a[[y]]==1)
