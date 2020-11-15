@@ -1,3 +1,25 @@
+#' GLM Prediction
+#'
+#' Create a Generalised Linear Model (glm) from a dataset and a given set of variables, then
+#' make predictions from the model, either on the original data or a new dataset.
+#'
+#' @param model_data dataframe or tibble
+#' @param y target variable name/response (given as a character)
+#' @param x features/terms (given as a single character or a character vector)
+#' @param threshold probability threshold for predicting positive class, default=0.5
+#' @param predict_data new data to make predictions on. by default, glm_predict predicts on the original data used to create the model
+#' @param ... other parameters to be passed into glm function
+#'
+#' @return A named list containing:
+#' @return $model: fitted model object
+#' @return $augment: augment object containing the predictions and statistics
+#' @return $accuracy
+#' @return $precision
+#' @return $recall
+#' @export
+#'
+#' @examples glm_predict(my_data, "y", "x")
+#' @examples glm_predict(my_data, "y", c("x", "z"), threshold=0.8, predict_data=new_data)
 glm_predict <- function(model_data, y, x, threshold=0.5, predict_data=NA, ...) {
   # Check that input types are as expected
   if ((!"data.frame" %in% class(model_data)) & (!"tbl" %in% class(model_data))) {
@@ -29,7 +51,7 @@ glm_predict <- function(model_data, y, x, threshold=0.5, predict_data=NA, ...) {
     x <- paste(x, collapse=" + ")
   }
   f <- paste(y, "~", x)
-  model <- glm(as.formula(f), family="binomial", data=model_data, ...)
+  model <- stats::glm(stats::as.formula(f), family="binomial", data=model_data, ...)
 
   if (is.na(predict_data)) {
     a <- broom::augment(model, type.predict="response")
