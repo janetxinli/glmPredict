@@ -18,8 +18,9 @@
 #' @return $recall
 #' @export
 #'
-#' @examples glm_predict(my_data, "y", "x")
-#' @examples glm_predict(my_data, "y", c("x", "z"), threshold=0.8, predict_data=new_data)
+#' @examples require(dplyr)
+#' @examples glm_predict(cancer_clean, "malignant", "texture_mean")
+#' @examples glm_predict(cancer_clean, "malignant", c("radius_mean", "concavity_mean"), threshold=0.8)
 glm_predict <- function(model_data, y, x, threshold=0.5, predict_data=NA, ...) {
   # Check that input types are as expected
   if ((!"data.frame" %in% class(model_data)) & (!"tbl" %in% class(model_data))) {
