@@ -1,6 +1,6 @@
 Package: glmPredict
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Make Predictions for a Generalised Linear Model
+Version: 0.1.0
 Authors@R: 
     person(given = "Janet",
            family = "Li",
@@ -14,8 +14,14 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Imports: 
-    broom,
     dplyr,
-    stats
+    broom,
+    stats,
+    datateachr
+Depends: 
+    R (>= 2.10)
+VignetteBuilder: knitr
