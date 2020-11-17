@@ -1,0 +1,25 @@
+---
+title: "glmPredict"
+author: "Janet Li"
+date: "`.r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{glmPredict}
+  %\VignetteEngine{knitr::rmarkdown}ß
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(glmPredict)
+```
+
+# glmPredict
+
+glmPredict extends the functionality of the `augment.glm` function
