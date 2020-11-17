@@ -21,7 +21,8 @@ Imports:
     dplyr,
     broom,
     stats,
-    datateachr
+    datateachr,
+    magrittr
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr
