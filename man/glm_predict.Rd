@@ -37,6 +37,7 @@ Create a Generalised Linear Model (glm) from a dataset and a given set of variab
 make predictions from the model, either on the original data or a new dataset.
 }
 \examples{
-glm_predict(my_data, "y", "x")
-glm_predict(my_data, "y", c("x", "z"), threshold=0.8, predict_data=new_data)
+require(dplyr)
+glm_predict(cancer_clean, "malignant", "texture_mean")
+glm_predict(cancer_clean, "malignant", c("radius_mean", "concavity_mean"), threshold=0.8)
 }
