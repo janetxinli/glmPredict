@@ -17,5 +17,5 @@
 #'   \item{symmetry_mean}{Mean symmetry of nuclei present in sample image}
 #'   \item{fractal_dimension_mean}{Mean factal dimension of nuclei present in sample image}
 #'   }
-#' @source \url{https://archive.ics.uci.edu/ml/citation_policy.html}
+#' @source \url{https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)}
 "cancer_clean"
