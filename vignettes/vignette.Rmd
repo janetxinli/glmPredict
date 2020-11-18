@@ -39,7 +39,7 @@ You can learn more about modelling in R and Generalised Linear Models [here](htt
 <br><br>
 You can learn more about the dataset by typing `?cancer_clean` into your Rstudio console. Essentially, the dataset is a tibble with 569 rows and 11 columns. Each row represents measurements from a single breast mass biopsy image, and each column is a different metric describing the nuclei present in the image. The `malignant` column describes the final diagnosis of each sample, where 1 = malignant and 0 = benign.
 <br><br>
-First, we'll start by subsetting `cancer_clean` by row.
+First, we'll start by subsetting `cancer_clean` by row. `cancer_subset` will contain 75% of the rows in the original dataset, and `cancer_new` will contain the other 25%.
 
 ```{r prep-data}
 set.seed(123)
@@ -72,4 +72,20 @@ preds[["recall"]]
 preds[2]
 ```
 
-# Add threshold, newdata stuff
+### Predicting on new data
+
+We can make predictions on new data that isn't in the `glm` model object, as well. We didn't use `cancer_new` when creating our model, but what if we want to see what the model predicts for those observations? In this case, we can pass `cancer_new` by specifying the `newdata` argument in the `glm_predict` function:
+
+```{r newdata}
+(preds_new <- glm_predict(cancer_model, "malignant", newdata=cancer_new))
+```
+
+### Changing threshold
+
+Most often, a probability threshold of 0.5 is used to predict the positive class, but you might want to adjust this threshold if you want to be more or less strict with your predictions. In our case, the positive class is serious, and we would rather have more false positives than false negatives. We could decrease the threshold so we predict a sample as malignant more often. This can be done by specifying the `threshold` argument:
+
+```{r threshold}
+glm_predict(cancer_model, "malignant", threshold=0.4)
+```
+
+Note that these optional parameters can be combined, as well.
