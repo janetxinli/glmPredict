@@ -20,7 +20,7 @@ glm_predict(model, target, threshold = 0.5, newdata = NULL, ...)
 \value{
 A named list containing:
 
-\verb{$augment}: Augment object containing the model predictions and statistics.
+\verb{$augment}: Augment object containing the model predictions and information about each observation.
 
 \verb{$accuracy}: Accuracy of predictions.
 

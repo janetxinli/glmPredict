@@ -41,7 +41,7 @@ cancer_subset <- cancer_clean[subset_ind,]
 cancer_new <- cancer_clean[-subset_ind,]
 
 # Create a glm with cancer_subset
-(cancer_model <- glm(malignant ~ texture_mean + radius_mean, data=cancer_subset, family="quasibinomial"))
+(cancer_model <- glm(malignant ~ texture_mean + radius_mean, data=cancer_subset, family="binomial"))
 ```
 
 Then, we can use the `cancer_model` to make predictions, setting the threshold for predicting the positive class (malignant in this case) to 0.6 for example purposes:
@@ -63,6 +63,10 @@ You can also pass a different dataset (one not used to create the `glm`) to make
 ```{r}
 glm_predict(cancer_model, "malignant", threshold=0.6, newdata=cancer_new)
 ```
+
+## Code of Conduct
+
+Please note that the glmPredict project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
 
 ---
 
@@ -98,6 +102,12 @@ At this point, I wanted to check to make sure that I was on the right track, so 
 
 To ensure that the examples (and my future tests) are able to run, I used `use_data_raw(name="cancer_clean")` to create an R script to clean a dataset to `data-raw/cancer_clean.R`. After adding my code to this file, I ran `usethis::use_data(cancer_clean, overwrite = TRUE)` to add the `.rda` object to the data directory, then I documented the dataset in `R/data.R`. 
 
-To add some tests to my package, I used `use_test()` and moved over my tests from Assignment 1b to the `tests/testthat/test-predict.R`. After running the tests manually, I used `test()` to run the automated test. Everything passed! Strangely, some of these same tests fail using `check()`... 
+To add some tests to my package, I used `use_test()` and moved over my tests from Assignment 1b to the `tests/testthat/test-predict.R`. After running the tests manually, I used `test()` to run the automated test. Everything passed!
 
-To create a vignette, I used `use_vignette("glmPredict")`.
+To create a vignette, I used `use_vignette("glmPredict")`, and added some more documentation.
+
+```{r eval=FALSE}
+use_code_of_conduct()
+use_pkgdown()
+build_site()
+```

@@ -10,7 +10,7 @@
 #' @param ... Other parameters to be passed into the `augment` function for making predictions.
 #'
 #' @return A named list containing:
-#' @return `$augment`: Augment object containing the model predictions and statistics.
+#' @return `$augment`: Augment object containing the model predictions and information about each observation.
 #' @return `$accuracy`: Accuracy of predictions.
 #' @return `$precision`: Precision of predictions.
 #' @return `$recall`: Recall of predictions.

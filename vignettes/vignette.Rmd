@@ -1,7 +1,5 @@
 ---
 title: "glmPredict"
-author: "Janet Li"
-date: "`.r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{glmPredict}
@@ -16,10 +14,62 @@ knitr::opts_chunk$set(
 )
 ```
 
+# glmPredict
+
+glmPredict extends the functionality of the `broom::augment.glm` function by making predictions of the target variable class. The `glm_predict` function makes these predictions. It requires a fitted `glm` model object with `family=binomial` or `family=quasibinomial` as input, as well as the name of the target variable. This is analogous to making predictions on Logistic Regression model. `glm_predict()` also returns some statistics of the model predictions for analysis: accuracy, precision and recall.
+<br><br>
+The class is predicted by comparing the response (the predicted probability of the positive class) to a threshold, 0.5 by default. The `threshold` argument can be changed to specify a higher or lower threshold for predicting the positivei class. By default, the model will predict on the data present in the `glm` model, but a different dataset with the same feature variables can be passed to the function with the `newdata` argument to make predictions on a new dataset.
+<br><br>
+The `glmPredict` package also comes equipped with a toy dataset, `cancer_clean`, to use and test the functionality of `glm_predict()`. 
+<br><br>
+You can install the development version from [GitHub](https://github.com/janetxinli/glmPredict) with:
+
+```{r eval=FALSE}
+install.packages("devtools")
+devtools::install_github("janetxinli/glmPredict")
+```
+
+### Basic Usage
+
 ```{r setup}
 library(glmPredict)
 ```
 
-# glmPredict
+You can learn more about modelling in R and Generalised Linear Models [here](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/glm). For this demo, we'll be working with the `cancer_clean` dataset. The `cancer_clean` dataset is a simplified version of the [Breast Cancer Wisconsin Dataset](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)). 
+<br><br>
+You can learn more about the dataset by typing `?cancer_clean` into your Rstudio console. Essentially, the dataset is a tibble with 569 rows and 11 columns. Each row represents measurements from a single breast mass biopsy image, and each column is a different metric describing the nuclei present in the image. The `malignant` column describes the final diagnosis of each sample, where 1 = malignant and 0 = benign.
+<br><br>
+First, we'll start by subsetting `cancer_clean` by row.
 
-glmPredict extends the functionality of the `augment.glm` function
+```{r prep-data}
+set.seed(123)
+subset_len <- floor(0.75 * nrow(cancer_clean))
+subset_ind <- sample(seq_len(nrow(cancer_clean)), size=subset_len)
+cancer_subset <- cancer_clean[subset_ind,]
+cancer_new <- cancer_clean[-subset_ind,]
+```
+
+Say we want to predict whether a sample will be classified as malignant or benign (y) by taking into account the mean texture and mean radius (x) of nuclei in each image. We can create a `glm` with the `cancer_subset` dataset and the formula `y ~ x`. 
+
+```{r create-model}
+(cancer_model <- glm(malignant ~ texture_mean + radius_mean, data=cancer_subset, family="binomial"))
+```
+
+Now if we want to see which samples in `cancer_subset` our model predicts are malignant, we can use the `glm_predict` function:
+
+```{r predict-subset}
+(preds <- glm_predict(cancer_model, "malignant"))
+```
+
+Under the hood, `glm_predict()` runs `augment.glm(type.predict="response")` on the model. This returns the predicted probability of each sample being in the positive class, and `glm_predict()` compares this probability to a certain threshold to classify each sample as either positive (malignant) or negative (benign). The predictions are appended to the `augment.glm` tibble, and returned from the function. Also returned from the function are the accuracy, precision and recall of the predictions. These are different metrics that describe how well the model has classified the data. 
+
+All of the return data is bundled in a named list, so if you save the output of `glm_predict()` to a variable like we did above, you can access the components any way you'd access a list:
+
+```{r access-vars}
+preds$augment
+preds["precision"]
+preds[["recall"]]
+preds[2]
+```
+
+# Add threshold, newdata stuff

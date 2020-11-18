@@ -29,9 +29,9 @@ cancer_subset <- cancer_clean[subset_ind,]
 cancer_new <- cancer_clean[-subset_ind,]
 
 # Create a glm with cancer_subset
-(cancer_model <- glm(malignant ~ texture_mean + radius_mean, data=cancer_subset, family="quasibinomial"))
+(cancer_model <- glm(malignant ~ texture_mean + radius_mean, data=cancer_subset, family="binomial"))
 #> 
-#> Call:  glm(formula = malignant ~ texture_mean + radius_mean, family = "quasibinomial", 
+#> Call:  glm(formula = malignant ~ texture_mean + radius_mean, family = "binomial", 
 #>     data = cancer_subset)
 #> 
 #> Coefficients:
@@ -40,7 +40,7 @@ cancer_new <- cancer_clean[-subset_ind,]
 #> 
 #> Degrees of Freedom: 425 Total (i.e. Null);  423 Residual
 #> Null Deviance:       551.5 
-#> Residual Deviance: 219.8     AIC: NA
+#> Residual Deviance: 219.8     AIC: 225.8
 ```
 
 Then, we can use the `cancer_model` to make predictions, setting the threshold for predicting the positive class (malignant in this case) to 0.6 for example purposes:
@@ -51,16 +51,16 @@ Then, we can use the `cancer_model` to make predictions, setting the threshold f
 #> # A tibble: 426 x 11
 #>    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid
 #>    <chr>         <dbl>        <dbl>       <dbl>   <dbl>   <dbl>      <dbl>
-#>  1 415               1         29.8       15.1  9.13e-1  0.425      0.451 
-#>  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.74  
-#>  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.715 
-#>  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0314
-#>  5 195               1         23.2       14.9  6.69e-1  0.897      0.949 
-#>  6 118               1         16.7       14.9  3.42e-1  1.47       1.55  
-#>  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.852 
-#>  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.708 
-#>  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.12  
-#> 10 14                1         24.0       15.8  8.64e-1  0.540      0.571 
+#>  1 415               1         29.8       15.1  9.13e-1  0.425      0.429 
+#>  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.66  
+#>  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.680 
+#>  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0299
+#>  5 195               1         23.2       14.9  6.69e-1  0.897      0.902 
+#>  6 118               1         16.7       14.9  3.42e-1  1.47       1.47  
+#>  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.811 
+#>  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.674 
+#>  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  
+#> 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 
 #> # … with 416 more rows, and 4 more variables: .hat <dbl>, .sigma <dbl>,
 #> #   .cooksd <dbl>, .prediction <dbl>
 #> 
@@ -81,16 +81,16 @@ cancer_predictions$augment
 #> # A tibble: 426 x 11
 #>    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid
 #>    <chr>         <dbl>        <dbl>       <dbl>   <dbl>   <dbl>      <dbl>
-#>  1 415               1         29.8       15.1  9.13e-1  0.425      0.451 
-#>  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.74  
-#>  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.715 
-#>  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0314
-#>  5 195               1         23.2       14.9  6.69e-1  0.897      0.949 
-#>  6 118               1         16.7       14.9  3.42e-1  1.47       1.55  
-#>  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.852 
-#>  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.708 
-#>  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.12  
-#> 10 14                1         24.0       15.8  8.64e-1  0.540      0.571 
+#>  1 415               1         29.8       15.1  9.13e-1  0.425      0.429 
+#>  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.66  
+#>  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.680 
+#>  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0299
+#>  5 195               1         23.2       14.9  6.69e-1  0.897      0.902 
+#>  6 118               1         16.7       14.9  3.42e-1  1.47       1.47  
+#>  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.811 
+#>  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.674 
+#>  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  
+#> 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 
 #> # … with 416 more rows, and 4 more variables: .hat <dbl>, .sigma <dbl>,
 #> #   .cooksd <dbl>, .prediction <dbl>
 cancer_predictions$precision
@@ -168,6 +168,6 @@ At this point, I wanted to check to make sure that I was on the right track, so 
 
 To ensure that the examples (and my future tests) are able to run, I used `use_data_raw(name="cancer_clean")` to create an R script to clean a dataset to `data-raw/cancer_clean.R`. After adding my code to this file, I ran `usethis::use_data(cancer_clean, overwrite = TRUE)` to add the `.rda` object to the data directory, then I documented the dataset in `R/data.R`.
 
-To add some tests to my package, I used `use_test()` and moved over my tests from Assignment 1b to the `tests/testthat/test-predict.R`. After running the tests manually, I used `test()` to run the automated test. Everything passed! Strangely, some of these same tests fail using `check()`...
+To add some tests to my package, I used `use_test()` and moved over my tests from Assignment 1b to the `tests/testthat/test-predict.R`. After running the tests manually, I used `test()` to run the automated test. Everything passed!
 
-To create a vignette, I used `use_vignette("glmPredict")`.
+To create a vignette, I used `use_vignette("glmPredict")`, and added some more documentation.
