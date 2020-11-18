@@ -13,6 +13,11 @@ knitr::opts_chunk$set(
 
 # glmPredict
 
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<!-- badges: end -->
+
 glmPredict extends the functionality of the `augment.glm` function of the `broom` package to make class predictions for a dataset with a Generalised Linear Model. This package was created for an assignment in [STAT545B](https://stat545.stat.ubc.ca/).
 
 ## Installation
