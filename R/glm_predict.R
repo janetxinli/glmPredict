@@ -50,7 +50,7 @@ glm_predict <- function(model, target, threshold=0.5, newdata=NULL, ...) {
 
   # Predict based on the given threshold
   a <- a %>%
-    dplyr::mutate(.prediction=ifelse(.fitted > threshold, 1, 0))
+    dplyr::mutate(.prediction=ifelse(a[[".fitted"]] > threshold, 1, 0))
 
   # Calculate error types and metrics
   true_pos <- sum(a[[".prediction"]]==1 & a[[target]]==1)
