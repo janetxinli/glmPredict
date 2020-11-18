@@ -1,13 +1,12 @@
 Package: glmPredict
-Title: Make Predictions for a Generalised Linear Model
+Title: Make Predictions from a Generalised Linear Model
 Version: 0.1.0
 Authors@R: 
     person(given = "Janet",
            family = "Li",
            role = c("aut", "cre"),
-           email = "janetxinli@gmail.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "janetxinli@gmail.com")
+Description: Predicts classes using a Generalised Linear Model. The threshold for predicted probability can be adjusted by the user. The input data can be either the data used for the model, or a new dataset.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -22,7 +21,8 @@ Imports:
     broom,
     stats,
     datateachr,
-    magrittr
+    magrittr,
+    base
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr

@@ -21,7 +21,7 @@ A tibble with 569 rows and 11 variables:
 }
 }
 \source{
-\url{https://archive.ics.uci.edu/ml/citation_policy.html}
+\url{https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)}
 }
 \usage{
 cancer_clean

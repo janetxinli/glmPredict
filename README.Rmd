@@ -1,0 +1,103 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# glmPredict
+
+glmPredict extends the functionality of the `augment.glm` function of the `broom` package to make class predictions for a dataset with a Generalised Linear Model.
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/janetxinli/glmPredict) with:
+
+```{r eval=FALSE}
+install.packages("devtools")
+devtools::install_github("janetxinli/glmPredict")
+```
+
+## Example
+
+We're going to predict the malignancy of samples in a cleaned version of the [Breast Cancer Wisconsin Dataset](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)) by creating a simple Generalised Linear Model. The dataset, `cancer_clean`, is available in the `glmPredict` package, where it has been slightly shrunk down from the original. The final diagnosis of the samples are encoded by the `malignant` column, where a value of 1 means the sample was diagnosed as malignant, and a sample of 0 means the sample was benign.
+
+First, we need to make the `glm`, with `family=binomial` or `family=quasibinomial` to specify the response as a factor. The data will be subsetted as well, so we have a set of unseen data to pass into `glm_predict` later.
+
+```{r}
+library(glmPredict)
+
+# Start by subsetting the data
+set.seed(123)
+subset_len <- floor(0.75 * nrow(cancer_clean))
+subset_ind <- sample(seq_len(nrow(cancer_clean)), size=subset_len)
+cancer_subset <- cancer_clean[subset_ind,]
+cancer_new <- cancer_clean[-subset_ind,]
+
+# Create a glm with cancer_subset
+(cancer_model <- glm(malignant ~ texture_mean + radius_mean, data=cancer_subset, family="quasibinomial"))
+```
+
+Then, we can use the `cancer_model` to make predictions, setting the threshold for predicting the positive class (malignant in this case) to 0.6 for example purposes:
+
+```{r}
+(cancer_predictions <- glm_predict(cancer_model, "malignant"))
+```
+
+The function returns the `augment` object which contains the predictions (`.prediction` column) and some statistics. The function also returns the accuracy, precision and recall of the predictions. This data is grouped in a named list, so the components can be accessed by name or index:
+
+```{r}
+cancer_predictions$augment
+cancer_predictions$precision
+cancer_predictions[4]
+```
+
+You can also pass a different dataset (one not used to create the `glm`) to make predictions with `glm_predict`. To do so, you just need to specify the dataset with the `newdata` argument.
+
+```{r}
+glm_predict(cancer_model, "malignant", threshold=0.6, newdata=cancer_new)
+```
+
+---
+
+### Exercise 1.1: My Development
+
+I started by using devtools to set up the structure of my package:
+```{r eval=FALSE}
+library(devtools)
+create_package("~/Documents/school/masters/stat545/glmPredict")
+```
+
+I set up Git manually through the command line. Then, I opened up the glmPredict directory in Rstudio and created an R file for my function with `use_r("predict")`.
+
+I copied my function from Assignment 1b directly into the created file, R/predict.R, and made some changes that I thought would make it more usable. Since my function has a few dependencies, I used the use_package function to explicitly tell devtools that these are required:
+```{r eval=FALSE}
+use_package("broom")
+use_package("dplyr")
+use_package("stats")
+use_package("datateachr")
+use_pipe()
+```
+
+I also changed the function calls in `R/predict.R` to explicitly call the functions from their respective packages (i.e. changed `as.formula(f)` to `stats::as.formula(f)`).
+
+Next, I added the documentation skeleton to my file with `Code > Insert Roxygen Skeleton`, and added some information about the function parameters, return value and a couple of example function calls. Then, I added licensing information and aggregated the documentation:
+
+```{r eval=FALSE}
+use_mit_license("Janet Li")
+document()
+```
+
+At this point, I wanted to check to make sure that I was on the right track, so I used `load_all()` to do a quick manual test of the function. Everything was working as expected, so I ran `check()`... and got an error! Turns out the `@examples` portion of the roxygen2 skeleton actually runs the code, and I was using variable names that didn't exist in my environment.
+
+To ensure that the examples (and my future tests) are able to run, I used `use_data_raw(name="cancer_clean")` to create an R script to clean a dataset to `data-raw/cancer_clean.R`. After adding my code to this file, I ran `usethis::use_data(cancer_clean, overwrite = TRUE)` to add the `.rda` object to the data directory, then I documented the dataset in `R/data.R`. 
+
+To add some tests to my package, I used `use_test()` and moved over my tests from Assignment 1b to the `tests/testthat/test-predict.R`. After running the tests manually, I used `test()` to run the automated test. Everything passed! Strangely, some of these same tests fail using `check()`... 
+
+To create a vignette, I used `use_vignette("glmPredict")`.
