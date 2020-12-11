@@ -122,7 +122,6 @@
 <p>Now if we want to see which samples in <code>cancer_subset</code> our model predicts are malignant, we can use the <code>glm_predict</code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; $augment</span>
 <span class="co">#&gt; # A tibble: 426 x 11</span>
 <span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
 <span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -137,51 +136,26 @@
 <span class="co">#&gt;  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  </span>
 <span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
 <span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $accuracy</span>
-<span class="co">#&gt; [1] 0.8896714</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $precision</span>
-<span class="co">#&gt; [1] 0.8863636</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $recall</span>
-<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
-<p>Under the hood, <code><a href="../reference/glm_predict.html">glm_predict()</a></code> runs <code>augment.glm(type.predict="response")</code> on the model. This returns the predicted probability of each sample being in the positive class, and <code><a href="../reference/glm_predict.html">glm_predict()</a></code> compares this probability to a certain threshold to classify each sample as either positive (malignant) or negative (benign). The predictions are appended to the <code>augment.glm</code> tibble, and returned from the function. Also returned from the function are the accuracy, precision and recall of the predictions. These are different metrics that describe how well the model has classified the data.</p>
-<p>All of the return data is bundled in a named list, so if you save the output of <code><a href="../reference/glm_predict.html">glm_predict()</a></code> to a variable like we did above, you can access the components any way you’d access a list:</p>
+<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
+<p>Under the hood, <code><a href="../reference/glm_predict.html">glm_predict()</a></code> runs <code>augment.glm(type.predict="response")</code> on the model. This returns the predicted probability of each sample being in the positive class, and <code><a href="../reference/glm_predict.html">glm_predict()</a></code> compares this probability to a certain threshold to classify each sample as either positive (malignant) or negative (benign). The predictions are appended to the <code>augment.glm</code> tibble, and returned from the function.</p>
+<p>The output of <code><a href="../reference/glm_predict.html">glm_predict()</a></code> is the <code>augment</code> object from <code>augment.glm</code>, with an extra column <code>.prediction</code> containing the predicted label for each example.</p>
+<p>The correctness of the predictions can be evaluated with several metrics, such as accuracy, prediction and recall. <code>glmPredict</code> provides functions to calculate these three metrics: <code>accuracy_score</code>, <code>precision_score</code> and <code>recall_score</code>. To use these functions, we need to compare the “ground truth” labels to our predictions given by <code>glm_predict</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">preds</span><span class="op">$</span><span class="va">augment</span>
-<span class="co">#&gt; # A tibble: 426 x 11</span>
-<span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 415               1         29.8       15.1  9.13e-1  0.425      0.429 </span>
-<span class="co">#&gt;  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.66  </span>
-<span class="co">#&gt;  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.680 </span>
-<span class="co">#&gt;  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0299</span>
-<span class="co">#&gt;  5 195               1         23.2       14.9  6.69e-1  0.897      0.902 </span>
-<span class="co">#&gt;  6 118               1         16.7       14.9  3.42e-1  1.47       1.47  </span>
-<span class="co">#&gt;  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.811 </span>
-<span class="co">#&gt;  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.674 </span>
-<span class="co">#&gt;  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  </span>
-<span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
-<span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="va">preds</span><span class="op">[</span><span class="st">"precision"</span><span class="op">]</span>
-<span class="co">#&gt; $precision</span>
-<span class="co">#&gt; [1] 0.8863636</span>
-<span class="va">preds</span><span class="op">[[</span><span class="st">"recall"</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; [1] 0.7852349</span>
-<span class="va">preds</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
-<span class="co">#&gt; $accuracy</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/accuracy_score.html">accuracy_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; [1] 0.8896714</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/precision_score.html">precision_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.8863636</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/recall_score.html">recall_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
 </div>
 <div id="predicting-on-new-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#predicting-on-new-data" class="anchor"></a>Predicting on new data</h3>
 <p>We can make predictions on new data that isn’t in the <code>glm</code> model object, as well. We didn’t use <code>cancer_new</code> when creating our model, but what if we want to see what the model predicts for those observations? In this case, we can pass <code>cancer_new</code> by specifying the <code>newdata</code> argument in the <code>glm_predict</code> function:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">preds_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span>, newdata<span class="op">=</span><span class="va">cancer_new</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; $augment</span>
 <span class="co">#&gt; # A tibble: 143 x 13</span>
 <span class="co">#&gt;    malignant radius_mean texture_mean perimeter_mean area_mean smoothness_mean</span>
 <span class="co">#&gt;        &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;           &lt;dbl&gt;</span>
@@ -197,24 +171,14 @@
 <span class="co">#&gt; 10         1        16.1         17.9          107        807.          0.104 </span>
 <span class="co">#&gt; # … with 133 more rows, and 7 more variables: compactness_mean &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   concavity_mean &lt;dbl&gt;, concave_points_mean &lt;dbl&gt;, symmetry_mean &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   fractal_dimension_mean &lt;dbl&gt;, .fitted &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $accuracy</span>
-<span class="co">#&gt; [1] 0.8811189</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $precision</span>
-<span class="co">#&gt; [1] 0.9259259</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $recall</span>
-<span class="co">#&gt; [1] 0.7936508</span></code></pre></div>
+<span class="co">#&gt; #   fractal_dimension_mean &lt;dbl&gt;, .fitted &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
 </div>
 <div id="changing-threshold" class="section level3">
 <h3 class="hasAnchor">
 <a href="#changing-threshold" class="anchor"></a>Changing threshold</h3>
 <p>Most often, a probability threshold of 0.5 is used to predict the positive class, but you might want to adjust this threshold if you want to be more or less strict with your predictions. In our case, the positive class is serious, and we would rather have more false positives than false negatives. We could decrease the threshold so we predict a sample as malignant more often. This can be done by specifying the <code>threshold</code> argument:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span>, threshold<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span>
-<span class="co">#&gt; $augment</span>
 <span class="co">#&gt; # A tibble: 426 x 11</span>
 <span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
 <span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -229,16 +193,7 @@
 <span class="co">#&gt;  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  </span>
 <span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
 <span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $accuracy</span>
-<span class="co">#&gt; [1] 0.8967136</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $precision</span>
-<span class="co">#&gt; [1] 0.8571429</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $recall</span>
-<span class="co">#&gt; [1] 0.8456376</span></code></pre></div>
+<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
 <p>Note that these optional parameters can be combined, as well.</p>
 </div>
 </div>

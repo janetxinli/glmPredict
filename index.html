@@ -88,9 +88,9 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"janetxinli/glmPredict"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="example" class="section level2">
+<div id="examples" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h2>
+<a href="#examples" class="anchor"></a>Examples</h2>
 <p>We’re going to predict the malignancy of samples in a cleaned version of the <a href="https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)">Breast Cancer Wisconsin Dataset</a> by creating a simple Generalised Linear Model. The dataset, <code>cancer_clean</code>, is available in the <code>glmPredict</code> package, where it has been slightly shrunk down from the original. The final diagnosis of the samples are encoded by the <code>malignant</code> column, where a value of 1 means the sample was diagnosed as malignant, and a sample of 0 means the sample was benign.</p>
 <p>First, we need to make the <code>glm</code>, with <code>family=binomial</code> or <code>family=quasibinomial</code> to specify the response as a factor. The data will be subsetted as well, so we have a set of unseen data to pass into <code>glm_predict</code> later.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -119,7 +119,6 @@
 <p>Then, we can use the <code>cancer_model</code> to make predictions, setting the threshold for predicting the positive class (malignant in this case) to 0.6 for example purposes:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">cancer_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; $augment</span>
 <span class="co">#&gt; # A tibble: 426 x 11</span>
 <span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
 <span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -134,43 +133,25 @@
 <span class="co">#&gt;  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  </span>
 <span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
 <span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $accuracy</span>
-<span class="co">#&gt; [1] 0.8896714</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $precision</span>
-<span class="co">#&gt; [1] 0.8863636</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $recall</span>
-<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
-<p>The function returns the <code>augment</code> object which contains the predictions (<code>.prediction</code> column) and some statistics. The function also returns the accuracy, precision and recall of the predictions. This data is grouped in a named list, so the components can be accessed by name or index:</p>
+<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
+<p>The function returns the <code>augment</code> object which contains the predictions (<code>.prediction</code> column).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cancer_predictions</span><span class="op">$</span><span class="va">augment</span>
-<span class="co">#&gt; # A tibble: 426 x 11</span>
-<span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 415               1         29.8       15.1  9.13e-1  0.425      0.429 </span>
-<span class="co">#&gt;  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.66  </span>
-<span class="co">#&gt;  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.680 </span>
-<span class="co">#&gt;  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0299</span>
-<span class="co">#&gt;  5 195               1         23.2       14.9  6.69e-1  0.897      0.902 </span>
-<span class="co">#&gt;  6 118               1         16.7       14.9  3.42e-1  1.47       1.47  </span>
-<span class="co">#&gt;  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.811 </span>
-<span class="co">#&gt;  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.674 </span>
-<span class="co">#&gt;  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  </span>
-<span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
-<span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="va">cancer_predictions</span><span class="op">$</span><span class="va">precision</span>
-<span class="co">#&gt; [1] 0.8863636</span>
-<span class="va">cancer_predictions</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>
-<span class="co">#&gt; $recall</span>
-<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
+<code class="sourceCode R"><span class="va">cancer_predictions</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span>
+<span class="co">#&gt;   [1] 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 0 1 1 0 0 1 1 1 0 0 0 0 0 0 0 1 0 1</span>
+<span class="co">#&gt;  [38] 0 0 0 0 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 1 0</span>
+<span class="co">#&gt;  [75] 0 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0</span>
+<span class="co">#&gt; [112] 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 0 0 1 0 0 0 1 0 0 0</span>
+<span class="co">#&gt; [149] 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 1 0 0 1 0 0 1</span>
+<span class="co">#&gt; [186] 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 1 1 0 1</span>
+<span class="co">#&gt; [223] 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1</span>
+<span class="co">#&gt; [260] 0 1 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 1 1</span>
+<span class="co">#&gt; [297] 0 0 1 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 1 1 0 0 0</span>
+<span class="co">#&gt; [334] 1 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0</span>
+<span class="co">#&gt; [371] 0 1 1 0 0 0 0 0 1 0 1 0 1 0 1 1 1 1 1 0 1 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 1</span>
+<span class="co">#&gt; [408] 0 1 1 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0 1</span></code></pre></div>
 <p>You can also pass a different dataset (one not used to create the <code>glm</code>) to make predictions with <code>glm_predict</code>. To do so, you just need to specify the dataset with the <code>newdata</code> argument.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span>, threshold<span class="op">=</span><span class="fl">0.6</span>, newdata<span class="op">=</span><span class="va">cancer_new</span><span class="op">)</span>
-<span class="co">#&gt; $augment</span>
 <span class="co">#&gt; # A tibble: 143 x 13</span>
 <span class="co">#&gt;    malignant radius_mean texture_mean perimeter_mean area_mean smoothness_mean</span>
 <span class="co">#&gt;        &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;           &lt;dbl&gt;</span>
@@ -186,16 +167,18 @@
 <span class="co">#&gt; 10         1        16.1         17.9          107        807.          0.104 </span>
 <span class="co">#&gt; # … with 133 more rows, and 7 more variables: compactness_mean &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   concavity_mean &lt;dbl&gt;, concave_points_mean &lt;dbl&gt;, symmetry_mean &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   fractal_dimension_mean &lt;dbl&gt;, .fitted &lt;dbl&gt;, .prediction &lt;dbl&gt;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $accuracy</span>
-<span class="co">#&gt; [1] 0.8671329</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $precision</span>
-<span class="co">#&gt; [1] 0.94</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $recall</span>
-<span class="co">#&gt; [1] 0.7460317</span></code></pre></div>
+<span class="co">#&gt; #   fractal_dimension_mean &lt;dbl&gt;, .fitted &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
+<p>There are several metrics for evaluating predictons in a binary classification problem, such as accuracy, precision and recall. <code>glmPredict</code> provides functions to calculate these three scores:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">true_labels</span> <span class="op">&lt;-</span> <span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>
+<span class="va">predicted_labels</span> <span class="op">&lt;-</span> <span class="va">cancer_predictions</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span>
+<span class="fu"><a href="reference/accuracy_score.html">accuracy_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.8896714</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/precision_score.html">precision_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.8863636</span>
+<span class="fu"><a href="reference/recall_score.html">recall_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
 </div>
 <div id="code-of-conduct" class="section level2">
 <h2 class="hasAnchor">
@@ -206,12 +189,12 @@
 <h3 class="hasAnchor">
 <a href="#exercise-11-my-development" class="anchor"></a>Exercise 1.1: My Development</h3>
 <p>I started by using devtools to set up the structure of my package:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">devtools</span><span class="op">)</span>
 <span class="fu">create_package</span><span class="op">(</span><span class="st">"~/Documents/school/masters/stat545/glmPredict"</span><span class="op">)</span></code></pre></div>
 <p>I set up Git manually through the command line. Then, I opened up the glmPredict directory in Rstudio and created an R file for my function with <code>use_r("predict")</code>.</p>
 <p>I copied my function from Assignment 1b directly into the created file, R/predict.R, and made some changes that I thought would make it more usable. Since my function has a few dependencies, I used the use_package function to explicitly tell devtools that these are required:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">use_package</span><span class="op">(</span><span class="st">"broom"</span><span class="op">)</span>
 <span class="fu">use_package</span><span class="op">(</span><span class="st">"dplyr"</span><span class="op">)</span>
 <span class="fu">use_package</span><span class="op">(</span><span class="st">"stats"</span><span class="op">)</span>
@@ -219,7 +202,7 @@
 <span class="fu">use_pipe</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>I also changed the function calls in <code>R/predict.R</code> to explicitly call the functions from their respective packages (i.e. changed <code><a href="https://rdrr.io/r/stats/formula.html">as.formula(f)</a></code> to <code><a href="https://rdrr.io/r/stats/formula.html">stats::as.formula(f)</a></code>).</p>
 <p>Next, I added the documentation skeleton to my file with <code>Code &gt; Insert Roxygen Skeleton</code>, and added some information about the function parameters, return value and a couple of example function calls. Then, I added licensing information and aggregated the documentation:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">use_mit_license</span><span class="op">(</span><span class="st">"Janet Li"</span><span class="op">)</span>
 <span class="fu">document</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>At this point, I wanted to check to make sure that I was on the right track, so I used <code>load_all()</code> to do a quick manual test of the function. Everything was working as expected, so I ran <code><a href="https://rdrr.io/r/utils/PkgUtils.html">check()</a></code>… and got an error! Turns out the <code>@examples</code> portion of the roxygen2 skeleton actually runs the code, and I was using variable names that didn’t exist in my environment.</p>
@@ -227,7 +210,7 @@
 <p>To add some tests to my package, I used <code>use_test()</code> and moved over my tests from Assignment 1b to the <code>tests/testthat/test-predict.R</code>. After running the tests manually, I used <code>test()</code> to run the automated test. Everything passed!</p>
 <p>To create a vignette, I used <code>use_vignette("glmPredict")</code>, and added some more detailed documentation to <code>vignettes/vignette.Rmd</code>.</p>
 <p>Finally, I added a code of conduct and created a package website with:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">use_code_of_conduct</span><span class="op">(</span><span class="op">)</span>
 <span class="fu">use_pkgdown</span><span class="op">(</span><span class="op">)</span>
 <span class="fu">build_site</span><span class="op">(</span><span class="op">)</span></code></pre></div>
