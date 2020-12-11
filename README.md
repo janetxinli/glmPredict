@@ -15,7 +15,7 @@ install.packages("devtools")
 devtools::install_github("janetxinli/glmPredict")
 ```
 
-## Example
+## Examples
 
 We're going to predict the malignancy of samples in a cleaned version of the [Breast Cancer Wisconsin Dataset](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)) by creating a simple Generalised Linear Model. The dataset, `cancer_clean`, is available in the `glmPredict` package, where it has been slightly shrunk down from the original. The final diagnosis of the samples are encoded by the `malignant` column, where a value of 1 means the sample was diagnosed as malignant, and a sample of 0 means the sample was benign.
 
@@ -50,7 +50,6 @@ Then, we can use the `cancer_model` to make predictions, setting the threshold f
 
 ``` r
 (cancer_predictions <- glm_predict(cancer_model, "malignant"))
-#> $augment
 #> # A tibble: 426 x 11
 #>    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid
 #>    <chr>         <dbl>        <dbl>       <dbl>   <dbl>   <dbl>      <dbl>
@@ -66,48 +65,30 @@ Then, we can use the `cancer_model` to make predictions, setting the threshold f
 #> 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 
 #> # … with 416 more rows, and 4 more variables: .hat <dbl>, .sigma <dbl>,
 #> #   .cooksd <dbl>, .prediction <dbl>
-#> 
-#> $accuracy
-#> [1] 0.8896714
-#> 
-#> $precision
-#> [1] 0.8863636
-#> 
-#> $recall
-#> [1] 0.7852349
 ```
 
-The function returns the `augment` object which contains the predictions (`.prediction` column) and some statistics. The function also returns the accuracy, precision and recall of the predictions. This data is grouped in a named list, so the components can be accessed by name or index:
+The function returns the `augment` object which contains the predictions (`.prediction` column).
 
 ``` r
-cancer_predictions$augment
-#> # A tibble: 426 x 11
-#>    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid
-#>    <chr>         <dbl>        <dbl>       <dbl>   <dbl>   <dbl>      <dbl>
-#>  1 415               1         29.8       15.1  9.13e-1  0.425      0.429 
-#>  2 463               0         27.0       14.4  7.38e-1 -1.64      -1.66  
-#>  3 179               0         22.2       13.0  2.05e-1 -0.677     -0.680 
-#>  4 526               0         13.1        8.57 4.45e-4 -0.0299    -0.0299
-#>  5 195               1         23.2       14.9  6.69e-1  0.897      0.902 
-#>  6 118               1         16.7       14.9  3.42e-1  1.47       1.47  
-#>  7 299               0         18.2       14.3  2.78e-1 -0.808     -0.811 
-#>  8 229               0         24.0       12.6  2.01e-1 -0.669     -0.674 
-#>  9 244               0         23.8       13.8  4.28e-1 -1.06      -1.06  
-#> 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 
-#> # … with 416 more rows, and 4 more variables: .hat <dbl>, .sigma <dbl>,
-#> #   .cooksd <dbl>, .prediction <dbl>
-cancer_predictions$precision
-#> [1] 0.8863636
-cancer_predictions[4]
-#> $recall
-#> [1] 0.7852349
+cancer_predictions[[".prediction"]]
+#>   [1] 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 0 1 1 0 0 1 1 1 0 0 0 0 0 0 0 1 0 1
+#>  [38] 0 0 0 0 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 1 0
+#>  [75] 0 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0
+#> [112] 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 0 0 1 0 0 0 1 0 0 0
+#> [149] 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 1 0 0 1 0 0 1
+#> [186] 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 1 1 0 1
+#> [223] 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1
+#> [260] 0 1 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 1 1
+#> [297] 0 0 1 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 1 1 0 0 0
+#> [334] 1 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0
+#> [371] 0 1 1 0 0 0 0 0 1 0 1 0 1 0 1 1 1 1 1 0 1 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 1
+#> [408] 0 1 1 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0 1
 ```
 
 You can also pass a different dataset (one not used to create the `glm`) to make predictions with `glm_predict`. To do so, you just need to specify the dataset with the `newdata` argument.
 
 ``` r
 glm_predict(cancer_model, "malignant", threshold=0.6, newdata=cancer_new)
-#> $augment
 #> # A tibble: 143 x 13
 #>    malignant radius_mean texture_mean perimeter_mean area_mean smoothness_mean
 #>        <dbl>       <dbl>        <dbl>          <dbl>     <dbl>           <dbl>
@@ -124,15 +105,22 @@ glm_predict(cancer_model, "malignant", threshold=0.6, newdata=cancer_new)
 #> # … with 133 more rows, and 7 more variables: compactness_mean <dbl>,
 #> #   concavity_mean <dbl>, concave_points_mean <dbl>, symmetry_mean <dbl>,
 #> #   fractal_dimension_mean <dbl>, .fitted <dbl>, .prediction <dbl>
-#> 
-#> $accuracy
-#> [1] 0.8671329
-#> 
-#> $precision
-#> [1] 0.94
-#> 
-#> $recall
-#> [1] 0.7460317
+```
+
+There are several metrics for evaluating predictons in a binary classification problem, such as accuracy, precision and recall. `glmPredict` provides functions to calculate these three scores:
+
+``` r
+true_labels <- cancer_subset[["malignant"]]
+predicted_labels <- cancer_predictions[[".prediction"]]
+accuracy_score(true_labels, predicted_labels)
+#> [1] 0.8896714
+```
+
+``` r
+precision_score(true_labels, predicted_labels)
+#> [1] 0.8863636
+recall_score(true_labels, predicted_labels)
+#> [1] 0.7852349
 ```
 
 ## Code of Conduct

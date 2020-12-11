@@ -2,14 +2,14 @@
 % Please edit documentation in R/glm_predict.R
 \name{glm_predict}
 \alias{glm_predict}
-\title{GLM Prediction}
+\title{GLM Predict}
 \usage{
 glm_predict(model, target, threshold = 0.5, newdata = NULL, ...)
 }
 \arguments{
 \item{model}{Fitted \code{glm} model object}
 
-\item{target}{Target name (must be present as a column in the model object). This is the y variable when creating a \code{glm}.}
+\item{target}{Target name (must be present as a column in the mdodel object). This is the y variable when creating a \code{glm}.}
 
 \item{threshold}{Probability threshold for predicting positive class. Must be between 0 and 1 (exclusive). default=\code{0.5}.}
 
@@ -18,15 +18,7 @@ glm_predict(model, target, threshold = 0.5, newdata = NULL, ...)
 \item{...}{Other parameters to be passed into the \code{augment} function for making predictions.}
 }
 \value{
-A named list containing:
-
-\verb{$augment}: Augment object containing the model predictions and information about each observation.
-
-\verb{$accuracy}: Accuracy of predictions.
-
-\verb{$precision}: Precision of predictions.
-
-\verb{$recall}: Recall of predictions.
+\code{augment}: Augment object containing the model predictions and information about each observation.
 }
 \description{
 Create a Generalised Linear Model (glm) from a dataset and a given set of variables, then

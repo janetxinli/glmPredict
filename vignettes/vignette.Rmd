@@ -61,15 +61,22 @@ Now if we want to see which samples in `cancer_subset` our model predicts are ma
 (preds <- glm_predict(cancer_model, "malignant"))
 ```
 
-Under the hood, `glm_predict()` runs `augment.glm(type.predict="response")` on the model. This returns the predicted probability of each sample being in the positive class, and `glm_predict()` compares this probability to a certain threshold to classify each sample as either positive (malignant) or negative (benign). The predictions are appended to the `augment.glm` tibble, and returned from the function. Also returned from the function are the accuracy, precision and recall of the predictions. These are different metrics that describe how well the model has classified the data. 
+Under the hood, `glm_predict()` runs `augment.glm(type.predict="response")` on the model. This returns the predicted probability of each sample being in the positive class, and `glm_predict()` compares this probability to a certain threshold to classify each sample as either positive (malignant) or negative (benign). The predictions are appended to the `augment.glm` tibble, and returned from the function.
 
-All of the return data is bundled in a named list, so if you save the output of `glm_predict()` to a variable like we did above, you can access the components any way you'd access a list:
+The output of `glm_predict()` is the `augment` object from `augment.glm`, with an extra column `.prediction` containing the predicted label for each example.
 
-```{r access-vars}
-preds$augment
-preds["precision"]
-preds[["recall"]]
-preds[2]
+The correctness of the predictions can be evaluated with several metrics, such as accuracy, prediction and recall. `glmPredict` provides functions to calculate these three metrics: `accuracy_score`, `precision_score` and `recall_score`. To use these functions, we need to compare the "ground truth" labels to our predictions given by `glm_predict`.
+
+```{r accuracy-score}
+accuracy_score(cancer_subset[["malignant"]], preds[[".prediction"]])
+```
+
+```{r precision-score}
+precision_score(cancer_subset[["malignant"]], preds[[".prediction"]])
+```
+
+```{r recall-score}
+recall_score(cancer_subset[["malignant"]], preds[[".prediction"]])
 ```
 
 ### Predicting on new data
