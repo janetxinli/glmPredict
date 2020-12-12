@@ -79,7 +79,7 @@
 <a href="#glmpredict" class="anchor"></a>glmPredict</h1></div>
 <!-- badges: start -->
 
-<p>glmPredict extends the functionality of the <code>augment.glm</code> function of the <code>broom</code> package to make class predictions for a dataset with a Generalised Linear Model. This package was created for an assignment in <a href="https://stat545.stat.ubc.ca/">STAT545B</a>.</p>
+<p>glmPredict extends the functionality of the <code>augment.glm</code> function of the <code>broom</code> package to make and evaluate class predictions for a dataset with a Generalised Linear Model. This package was created for an assignment in <a href="https://stat545.stat.ubc.ca/">STAT545B</a>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -118,7 +118,7 @@
 <span class="co">#&gt; Residual Deviance: 219.8     AIC: 225.8</span></code></pre></div>
 <p>Then, we can use the <code>cancer_model</code> to make predictions, setting the threshold for predicting the positive class (malignant in this case) to 0.6 for example purposes:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">cancer_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="op">(</span><span class="va">cancer_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span>, threshold<span class="op">=</span><span class="fl">0.6</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 426 x 11</span>
 <span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
 <span class="co">#&gt;    &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -134,17 +134,18 @@
 <span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
 <span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
-<p>The function returns the <code>augment</code> object which contains the predictions (<code>.prediction</code> column).</p>
+<p>By default, <code>glm_predict</code> considers the positive class label to be <code>1</code> and the negative class to be <code>0</code>, which is the standard for binary classification problems, but you can provide different labels using the <code>pos_label</code> and <code>neg_label</code> arguments. Note that the y value label must still be between 0 and 1, which is also a limitation of the <code>glm</code> function.</p>
+<p>The function returns the <code>augment</code> object, with an additional <code>.prediction</code> column containing the predicted class for each observation/example.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cancer_predictions</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt;   [1] 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 0 1 1 0 0 1 1 1 0 0 0 0 0 0 0 1 0 1</span>
-<span class="co">#&gt;  [38] 0 0 0 0 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 1 0</span>
-<span class="co">#&gt;  [75] 0 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0</span>
-<span class="co">#&gt; [112] 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 0 0 1 0 0 0 1 0 0 0</span>
+<span class="co">#&gt;   [1] 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 0 0 0 1 0 1</span>
+<span class="co">#&gt;  [38] 0 0 0 0 0 1 1 0 0 0 1 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0</span>
+<span class="co">#&gt;  [75] 0 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0</span>
+<span class="co">#&gt; [112] 0 1 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 0 0 1 0 0 0 1 0 0 0</span>
 <span class="co">#&gt; [149] 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 1 0 0 1 0 0 1</span>
-<span class="co">#&gt; [186] 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 1 1 0 1</span>
+<span class="co">#&gt; [186] 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 1</span>
 <span class="co">#&gt; [223] 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1</span>
-<span class="co">#&gt; [260] 0 1 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 1 1</span>
+<span class="co">#&gt; [260] 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 1 1</span>
 <span class="co">#&gt; [297] 0 0 1 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 1 1 0 0 0</span>
 <span class="co">#&gt; [334] 1 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0</span>
 <span class="co">#&gt; [371] 0 1 1 0 0 0 0 0 1 0 1 0 1 0 1 1 1 1 1 0 1 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 1</span>
@@ -168,17 +169,18 @@
 <span class="co">#&gt; # … with 133 more rows, and 7 more variables: compactness_mean &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   concavity_mean &lt;dbl&gt;, concave_points_mean &lt;dbl&gt;, symmetry_mean &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   fractal_dimension_mean &lt;dbl&gt;, .fitted &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
-<p>There are several metrics for evaluating predictons in a binary classification problem, such as accuracy, precision and recall. <code>glmPredict</code> provides functions to calculate these three scores:</p>
+<p>There are several metrics for evaluating predictons in a binary classification problem, such as accuracy, precision and recall. <code>glmPredict</code> provides functions to calculate these three scores: <code>accuracy_score</code>, <code>precision_score</code> and <code>recall_score</code>. You can score a set of predictions by providing the true labels and predicted labels to one of these functions, for example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/accuracy_score.html">accuracy_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">cancer_predictions</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.8920188</span></code></pre></div>
+<p>You can also save the true labels and predictions as variables and call one of the scoring functions on the individual vectors:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">true_labels</span> <span class="op">&lt;-</span> <span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>
 <span class="va">predicted_labels</span> <span class="op">&lt;-</span> <span class="va">cancer_predictions</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span>
-<span class="fu"><a href="reference/accuracy_score.html">accuracy_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.8896714</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/precision_score.html">precision_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.8863636</span>
+<span class="fu"><a href="reference/precision_score.html">precision_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.9186992</span>
 <span class="fu"><a href="reference/recall_score.html">recall_score</a></span><span class="op">(</span><span class="va">true_labels</span>, <span class="va">predicted_labels</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
+<span class="co">#&gt; [1] 0.7583893</span></code></pre></div>
 </div>
 <div id="code-of-conduct" class="section level2">
 <h2 class="hasAnchor">

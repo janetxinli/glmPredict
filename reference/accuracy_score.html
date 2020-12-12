@@ -129,13 +129,13 @@ returns the accuracy of the predictions." />
 returns the accuracy of the predictions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>accuracy_score</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>predictions</span>, normalize <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>accuracy_score</span><span class='op'>(</span><span class='va'>correct</span>, <span class='va'>predictions</span>, normalize <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
+      <th>correct</th>
       <td><p>True/correct labels.</p></td>
     </tr>
     <tr>
@@ -152,6 +152,11 @@ returns the accuracy of the predictions.</p>
 
     <p><code>accuracy</code> (numeric): If <code>normalize==TRUE</code>, this is the fraction of correctly classified examples. Otherwise, returns the number correct predictions.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='va'>cancer_model</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>malignant</span> <span class='op'>~</span> <span class='va'>texture_mean</span>, data<span class='op'>=</span><span class='va'>cancer_clean</span>, family<span class='op'>=</span><span class='st'>"quasibinomial"</span><span class='op'>)</span>
+<span class='va'>cancer_preds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='glm_predict.html'>glm_predict</a></span><span class='op'>(</span><span class='va'>cancer_model</span>, <span class='st'>"malignant"</span><span class='op'>)</span>
+<span class='va'>accuracy</span> <span class='op'>&lt;-</span> <span class='fu'>accuracy_score</span><span class='op'>(</span><span class='va'>cancer_clean</span><span class='op'>[[</span><span class='st'>"malignant"</span><span class='op'>]</span><span class='op'>]</span>, <span class='va'>cancer_preds</span><span class='op'>[[</span><span class='st'>".prediction"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

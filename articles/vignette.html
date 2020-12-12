@@ -89,7 +89,7 @@
 <div id="glmpredict" class="section level1">
 <h1 class="hasAnchor">
 <a href="#glmpredict" class="anchor"></a>glmPredict</h1>
-<p>glmPredict extends the functionality of the <code><a href="https://broom.tidymodels.org/reference/augment.glm.html">broom::augment.glm</a></code> function by making predictions of the target variable class. The <code>glm_predict</code> function makes these predictions. It requires a fitted <code>glm</code> model object with <code>family=binomial</code> or <code>family=quasibinomial</code> as input, as well as the name of the target variable. This is analogous to making predictions on Logistic Regression model. <code><a href="../reference/glm_predict.html">glm_predict()</a></code> also returns some statistics of the model predictions for analysis: accuracy, precision and recall. <br><br> The class is predicted by comparing the response (the predicted probability of the positive class) to a threshold, 0.5 by default. The <code>threshold</code> argument can be changed to specify a higher or lower threshold for predicting the positivei class. By default, the model will predict on the data present in the <code>glm</code> model, but a different dataset with the same feature variables can be passed to the function with the <code>newdata</code> argument to make predictions on a new dataset. <br><br> The <code>glmPredict</code> package also comes equipped with a toy dataset, <code>cancer_clean</code>, to use and test the functionality of <code><a href="../reference/glm_predict.html">glm_predict()</a></code>. <br><br> You can install the development version from <a href="https://github.com/janetxinli/glmPredict">GitHub</a> with:</p>
+<p>glmPredict extends the functionality of the <code><a href="https://broom.tidymodels.org/reference/augment.glm.html">broom::augment.glm</a></code> function by making predictions of the target variable class. The <code>glm_predict</code> function makes these predictions. It requires a fitted <code>glm</code> model object with <code>family=binomial</code> or <code>family=quasibinomial</code> as input, as well as the name of the target variable. This is analogous to making predictions on Logistic Regression model. <br><br> The class is predicted by comparing the response (the predicted probability of the positive class) to a threshold, 0.5 by default. The <code>threshold</code> argument can be changed to specify a higher or lower threshold for predicting the positivei class. By default, the model will predict on the data present in the <code>glm</code> model, but a different dataset with the same feature variables can be passed to the function with the <code>newdata</code> argument to make predictions on a new dataset. <br><br> This package also comes with various functions for evaluating a set of predictions. Accuracy can be evaluated with the <code>accuracy_score</code> function, precision can be calculated with <code>precision_score</code>, and <code>recall_score</code> calculates the recall of the predictions. <br><br> The <code>glmPredict</code> package also comes equipped with a toy dataset, <code>cancer_clean</code>, to use and test the functionality of <code><a href="../reference/glm_predict.html">glm_predict()</a></code>. <br><br> You can install the development version from <a href="https://github.com/janetxinli/glmPredict">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"janetxinli/glmPredict"</span><span class="op">)</span></code></pre></div>
@@ -139,22 +139,12 @@
 <span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
 <p>Under the hood, <code><a href="../reference/glm_predict.html">glm_predict()</a></code> runs <code>augment.glm(type.predict="response")</code> on the model. This returns the predicted probability of each sample being in the positive class, and <code><a href="../reference/glm_predict.html">glm_predict()</a></code> compares this probability to a certain threshold to classify each sample as either positive (malignant) or negative (benign). The predictions are appended to the <code>augment.glm</code> tibble, and returned from the function.</p>
 <p>The output of <code><a href="../reference/glm_predict.html">glm_predict()</a></code> is the <code>augment</code> object from <code>augment.glm</code>, with an extra column <code>.prediction</code> containing the predicted label for each example.</p>
-<p>The correctness of the predictions can be evaluated with several metrics, such as accuracy, prediction and recall. <code>glmPredict</code> provides functions to calculate these three metrics: <code>accuracy_score</code>, <code>precision_score</code> and <code>recall_score</code>. To use these functions, we need to compare the “ground truth” labels to our predictions given by <code>glm_predict</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/accuracy_score.html">accuracy_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.8896714</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/precision_score.html">precision_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.8863636</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/recall_score.html">recall_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
 </div>
 <div id="predicting-on-new-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#predicting-on-new-data" class="anchor"></a>Predicting on new data</h3>
 <p>We can make predictions on new data that isn’t in the <code>glm</code> model object, as well. We didn’t use <code>cancer_new</code> when creating our model, but what if we want to see what the model predicts for those observations? In this case, we can pass <code>cancer_new</code> by specifying the <code>newdata</code> argument in the <code>glm_predict</code> function:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span><span class="va">preds_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span>, newdata<span class="op">=</span><span class="va">cancer_new</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 143 x 13</span>
 <span class="co">#&gt;    malignant radius_mean texture_mean perimeter_mean area_mean smoothness_mean</span>
@@ -177,7 +167,7 @@
 <h3 class="hasAnchor">
 <a href="#changing-threshold" class="anchor"></a>Changing threshold</h3>
 <p>Most often, a probability threshold of 0.5 is used to predict the positive class, but you might want to adjust this threshold if you want to be more or less strict with your predictions. In our case, the positive class is serious, and we would rather have more false positives than false negatives. We could decrease the threshold so we predict a sample as malignant more often. This can be done by specifying the <code>threshold</code> argument:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/glm_predict.html">glm_predict</a></span><span class="op">(</span><span class="va">cancer_model</span>, <span class="st">"malignant"</span>, threshold<span class="op">=</span><span class="fl">0.4</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 426 x 11</span>
 <span class="co">#&gt;    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid</span>
@@ -194,7 +184,20 @@
 <span class="co">#&gt; 10 14                1         24.0       15.8  8.64e-1  0.540      0.543 </span>
 <span class="co">#&gt; # … with 416 more rows, and 4 more variables: .hat &lt;dbl&gt;, .sigma &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   .cooksd &lt;dbl&gt;, .prediction &lt;dbl&gt;</span></code></pre></div>
-<p>Note that these optional parameters can be combined, as well.</p>
+</div>
+<div id="evaluating-predictions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#evaluating-predictions" class="anchor"></a>Evaluating predictions</h3>
+<p>The correctness of the predictions can be evaluated with several metrics, such as accuracy, prediction and recall. <code>glmPredict</code> provides functions to calculate these three metrics: <code>accuracy_score</code>, <code>precision_score</code> and <code>recall_score</code>. To use these functions, we need to compare the “ground truth” labels to our predictions given by <code>glm_predict</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/accuracy_score.html">accuracy_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.8896714</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/precision_score.html">precision_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.8863636</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/recall_score.html">recall_score</a></span><span class="op">(</span><span class="va">cancer_subset</span><span class="op">[[</span><span class="st">"malignant"</span><span class="op">]</span><span class="op">]</span>, <span class="va">preds</span><span class="op">[[</span><span class="st">".prediction"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.7852349</span></code></pre></div>
 </div>
 </div>
   </div>
