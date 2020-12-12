@@ -4,12 +4,24 @@
 \alias{glm_predict}
 \title{GLM Predict}
 \usage{
-glm_predict(model, target, threshold = 0.5, newdata = NULL, ...)
+glm_predict(
+  model,
+  target,
+  pos_class = 1,
+  neg_class = 0,
+  threshold = 0.5,
+  newdata = NULL,
+  ...
+)
 }
 \arguments{
 \item{model}{Fitted \code{glm} model object}
 
-\item{target}{Target name (must be present as a column in the mdodel object). This is the y variable when creating a \code{glm}.}
+\item{target}{Target name (must be present as a column in the model object). This is the y variable when creating a \code{glm}.}
+
+\item{pos_class}{Positive class label. default=\code{1}. Like the y value in \code{glm}, this must be between 0 and 1.}
+
+\item{neg_class}{Negative class label. default=\code{0}. Like the y value in \code{glm}, this must be between 0 and 1.}
 
 \item{threshold}{Probability threshold for predicting positive class. Must be between 0 and 1 (exclusive). default=\code{0.5}.}
 
@@ -18,7 +30,7 @@ glm_predict(model, target, threshold = 0.5, newdata = NULL, ...)
 \item{...}{Other parameters to be passed into the \code{augment} function for making predictions.}
 }
 \value{
-\code{augment}: Augment object containing the model predictions and information about each observation.
+Augment object with a column \code{.prediction} that contains the predicted class for each example.
 }
 \description{
 Create a Generalised Linear Model (glm) from a dataset and a given set of variables, then

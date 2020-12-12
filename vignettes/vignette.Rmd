@@ -16,9 +16,11 @@ knitr::opts_chunk$set(
 
 # glmPredict
 
-glmPredict extends the functionality of the `broom::augment.glm` function by making predictions of the target variable class. The `glm_predict` function makes these predictions. It requires a fitted `glm` model object with `family=binomial` or `family=quasibinomial` as input, as well as the name of the target variable. This is analogous to making predictions on Logistic Regression model. `glm_predict()` also returns some statistics of the model predictions for analysis: accuracy, precision and recall.
+glmPredict extends the functionality of the `broom::augment.glm` function by making predictions of the target variable class. The `glm_predict` function makes these predictions. It requires a fitted `glm` model object with `family=binomial` or `family=quasibinomial` as input, as well as the name of the target variable. This is analogous to making predictions on Logistic Regression model.
 <br><br>
 The class is predicted by comparing the response (the predicted probability of the positive class) to a threshold, 0.5 by default. The `threshold` argument can be changed to specify a higher or lower threshold for predicting the positivei class. By default, the model will predict on the data present in the `glm` model, but a different dataset with the same feature variables can be passed to the function with the `newdata` argument to make predictions on a new dataset.
+<br><br>
+This package also comes with various functions for evaluating a set of predictions. Accuracy can be evaluated with the `accuracy_score` function, precision can be calculated with `precision_score`, and `recall_score` calculates the recall of the predictions.
 <br><br>
 The `glmPredict` package also comes equipped with a toy dataset, `cancer_clean`, to use and test the functionality of `glm_predict()`. 
 <br><br>
@@ -65,20 +67,6 @@ Under the hood, `glm_predict()` runs `augment.glm(type.predict="response")` on t
 
 The output of `glm_predict()` is the `augment` object from `augment.glm`, with an extra column `.prediction` containing the predicted label for each example.
 
-The correctness of the predictions can be evaluated with several metrics, such as accuracy, prediction and recall. `glmPredict` provides functions to calculate these three metrics: `accuracy_score`, `precision_score` and `recall_score`. To use these functions, we need to compare the "ground truth" labels to our predictions given by `glm_predict`.
-
-```{r accuracy-score}
-accuracy_score(cancer_subset[["malignant"]], preds[[".prediction"]])
-```
-
-```{r precision-score}
-precision_score(cancer_subset[["malignant"]], preds[[".prediction"]])
-```
-
-```{r recall-score}
-recall_score(cancer_subset[["malignant"]], preds[[".prediction"]])
-```
-
 ### Predicting on new data
 
 We can make predictions on new data that isn't in the `glm` model object, as well. We didn't use `cancer_new` when creating our model, but what if we want to see what the model predicts for those observations? In this case, we can pass `cancer_new` by specifying the `newdata` argument in the `glm_predict` function:
@@ -95,4 +83,19 @@ Most often, a probability threshold of 0.5 is used to predict the positive class
 glm_predict(cancer_model, "malignant", threshold=0.4)
 ```
 
-Note that these optional parameters can be combined, as well.
+### Evaluating predictions
+
+The correctness of the predictions can be evaluated with several metrics, such as accuracy, prediction and recall. `glmPredict` provides functions to calculate these three metrics: `accuracy_score`, `precision_score` and `recall_score`. To use these functions, we need to compare the "ground truth" labels to our predictions given by `glm_predict`.
+
+```{r accuracy-score}
+accuracy_score(cancer_subset[["malignant"]], preds[[".prediction"]])
+```
+
+```{r precision-score}
+precision_score(cancer_subset[["malignant"]], preds[[".prediction"]])
+```
+
+```{r recall-score}
+recall_score(cancer_subset[["malignant"]], preds[[".prediction"]])
+```
+

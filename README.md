@@ -4,7 +4,7 @@
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) <!-- badges: end -->
 
-glmPredict extends the functionality of the `augment.glm` function of the `broom` package to make class predictions for a dataset with a Generalised Linear Model. This package was created for an assignment in [STAT545B](https://stat545.stat.ubc.ca/).
+glmPredict extends the functionality of the `augment.glm` function of the `broom` package to make and evaluate class predictions for a dataset with a Generalised Linear Model. This package was created for an assignment in [STAT545B](https://stat545.stat.ubc.ca/).
 
 ## Installation
 
@@ -49,7 +49,7 @@ cancer_new <- cancer_clean[-subset_ind,]
 Then, we can use the `cancer_model` to make predictions, setting the threshold for predicting the positive class (malignant in this case) to 0.6 for example purposes:
 
 ``` r
-(cancer_predictions <- glm_predict(cancer_model, "malignant"))
+(cancer_predictions <- glm_predict(cancer_model, "malignant", threshold=0.6))
 #> # A tibble: 426 x 11
 #>    .rownames malignant texture_mean radius_mean .fitted  .resid .std.resid
 #>    <chr>         <dbl>        <dbl>       <dbl>   <dbl>   <dbl>      <dbl>
@@ -67,18 +67,20 @@ Then, we can use the `cancer_model` to make predictions, setting the threshold f
 #> #   .cooksd <dbl>, .prediction <dbl>
 ```
 
-The function returns the `augment` object which contains the predictions (`.prediction` column).
+By default, `glm_predict` considers the positive class label to be `1` and the negative class to be `0`, which is the standard for binary classification problems, but you can provide different labels using the `pos_label` and `neg_label` arguments. Note that the y value label must still be between 0 and 1, which is also a limitation of the `glm` function.
+
+The function returns the `augment` object, with an additional `.prediction` column containing the predicted class for each observation/example.
 
 ``` r
 cancer_predictions[[".prediction"]]
-#>   [1] 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 0 1 1 0 0 1 1 1 0 0 0 0 0 0 0 1 0 1
-#>  [38] 0 0 0 0 0 1 1 0 0 1 1 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 1 0
-#>  [75] 0 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0
-#> [112] 0 1 0 0 0 0 1 1 1 0 1 0 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 0 0 1 0 0 0 1 0 0 0
+#>   [1] 1 1 0 0 1 0 0 0 0 1 1 1 0 0 1 0 0 1 1 0 0 1 0 0 1 1 0 0 0 0 0 0 0 0 1 0 1
+#>  [38] 0 0 0 0 0 1 1 0 0 0 1 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0
+#>  [75] 0 1 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+#> [112] 0 1 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 0 0 1 0 0 0 1 0 0 0
 #> [149] 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 1 0 0 0 0 1 1 0 0 1 0 0 1
-#> [186] 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 1 1 0 1
+#> [186] 0 0 0 1 1 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 1
 #> [223] 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 1
-#> [260] 0 1 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 1 1
+#> [260] 0 0 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 1 0 1 0 1 1
 #> [297] 0 0 1 0 0 1 0 0 1 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 1 1 1 1 0 0 0
 #> [334] 1 0 0 0 1 1 0 0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0
 #> [371] 0 1 1 0 0 0 0 0 1 0 1 0 1 0 1 1 1 1 1 0 1 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 1
@@ -107,20 +109,22 @@ glm_predict(cancer_model, "malignant", threshold=0.6, newdata=cancer_new)
 #> #   fractal_dimension_mean <dbl>, .fitted <dbl>, .prediction <dbl>
 ```
 
-There are several metrics for evaluating predictons in a binary classification problem, such as accuracy, precision and recall. `glmPredict` provides functions to calculate these three scores:
+There are several metrics for evaluating predictons in a binary classification problem, such as accuracy, precision and recall. `glmPredict` provides functions to calculate these three scores: `accuracy_score`, `precision_score` and `recall_score`. You can score a set of predictions by providing the true labels and predicted labels to one of these functions, for example:
+
+``` r
+accuracy_score(cancer_subset[["malignant"]], cancer_predictions[[".prediction"]])
+#> [1] 0.8920188
+```
+
+You can also save the true labels and predictions as variables and call one of the scoring functions on the individual vectors:
 
 ``` r
 true_labels <- cancer_subset[["malignant"]]
 predicted_labels <- cancer_predictions[[".prediction"]]
-accuracy_score(true_labels, predicted_labels)
-#> [1] 0.8896714
-```
-
-``` r
 precision_score(true_labels, predicted_labels)
-#> [1] 0.8863636
+#> [1] 0.9186992
 recall_score(true_labels, predicted_labels)
-#> [1] 0.7852349
+#> [1] 0.7583893
 ```
 
 ## Code of Conduct

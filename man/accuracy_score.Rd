@@ -4,10 +4,10 @@
 \alias{accuracy_score}
 \title{Accuracy Score}
 \usage{
-accuracy_score(data, predictions, normalize = TRUE)
+accuracy_score(correct, predictions, normalize = TRUE)
 }
 \arguments{
-\item{data}{True/correct labels.}
+\item{correct}{True/correct labels.}
 
 \item{predictions}{Predicted labels.}
 
@@ -19,4 +19,9 @@ accuracy_score(data, predictions, normalize = TRUE)
 \description{
 Given a set of predictions from \code{glm_predict} and the correct data,
 returns the accuracy of the predictions.
+}
+\examples{
+cancer_model <- glm(malignant ~ texture_mean, data=cancer_clean, family="quasibinomial")
+cancer_preds <- glm_predict(cancer_model, "malignant")
+accuracy <- accuracy_score(cancer_clean[["malignant"]], cancer_preds[[".prediction"]])
 }

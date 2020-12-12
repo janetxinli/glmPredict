@@ -1,7 +1,7 @@
-## code to prepare `cancer_sample_clean` dataset goes here
+## code to prepare `cancer_clean` dataset goes here
 
 library("datateachr")
-cancer_clean = cancer_sample %>%
+cancer_clean <- cancer_sample %>%
   mutate(malignant=ifelse(diagnosis=="M", 1, 0)) %>%
   select(malignant, ends_with("_mean"))
 

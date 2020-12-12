@@ -1,13 +1,5 @@
 context("Test glm_predict")
 
-# Prepare data
-set.seed(123)
-train_size <- floor(0.75 * nrow(cancer_clean))
-train_ind <- sample(seq_len(nrow(cancer_clean)), size=train_size)
-
-cancer_subset <- cancer_clean[train_ind,]
-cancer_new <- cancer_clean[-train_ind,]
-
 cancer_model <- glm(malignant ~ radius_mean + concavity_mean, data=cancer_subset, family="quasibinomial")
 
 # Expected outputs

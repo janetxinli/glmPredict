@@ -4,18 +4,25 @@
 \alias{recall_score}
 \title{Recall Score}
 \usage{
-recall_score(correct, predictions, pos_class = 1)
+recall_score(correct, predictions, pos_class = 1, neg_class = 0)
 }
 \arguments{
 \item{correct}{True/correct labels.}
 
 \item{predictions}{Predicted labels.}
 
-\item{pos_class}{The positive prediction class.}
+\item{pos_class}{Positive class label. Like the y value in \code{glm}, this must be between 0 and 1. default=\code{1}.}
+
+\item{neg_class}{Negative class label. Like the y value in \code{glm}, this must be between 0 and 1. default=\code{0}.}
 }
 \value{
 \code{recall} (numeric): The recall (true positives / true positives + false negatives) of the predictions
 }
 \description{
 Recall Score
+}
+\examples{
+cancer_model <- glm(malignant ~ texture_mean, data=cancer_clean, family="quasibinomial")
+cancer_preds <- glm_predict(cancer_model, "malignant")
+recall <- recall_score(cancer_clean[["malignant"]], cancer_preds[[".prediction"]])
 }

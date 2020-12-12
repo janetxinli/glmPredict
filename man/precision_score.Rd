@@ -4,18 +4,25 @@
 \alias{precision_score}
 \title{Precision Score}
 \usage{
-precision_score(correct, predictions, pos_class = 1)
+precision_score(correct, predictions, pos_class = 1, neg_class = 0)
 }
 \arguments{
 \item{correct}{True/correct labels.}
 
 \item{predictions}{Predicted labels.}
 
-\item{pos_class}{The positive prediction class.}
+\item{pos_class}{Positive class label. Like the y value in \code{glm}, this must be between 0 and 1. default=\code{1}.}
+
+\item{neg_class}{Negative class label. Like the y value in \code{glm}, this must be between 0 and 1. default=\code{0}.}
 }
 \value{
 \code{precision} (numeric): The precision (true positives / true positives + false positives) of the predictions
 }
 \description{
 Precision Score
+}
+\examples{
+cancer_model <- glm(malignant ~ texture_mean, data=cancer_clean, family="quasibinomial")
+cancer_preds <- glm_predict(cancer_model, "malignant")
+precision <- precision_score(cancer_clean[["malignant"]], cancer_preds[[".prediction"]])
 }
